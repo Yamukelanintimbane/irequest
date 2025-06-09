@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iRequest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+          <link rel="stylesheet" href="ui/ui.css">
+</head>
+<body>
+    <div class="top-nav">
+        <!-- Empty div for left balance -->
+        <div></div>
+        
+        <!-- Trip Counter (Center) -->
+        <div class="trip-counter">
+            <div class="trip-number">1,247</div>
+            <div class="trip-label">TRIPS</div>
+        </div>
+        
+        <!-- Notification Section (Right) -->
+        <div class="notification-section">
+            <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">4</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <div id="tabs-bottom">
+        <a href="home.html">
+            <img src="icon-pack-basic/home.png" alt="Home">
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="ride.html">
+            <img src="icon-pack-basic/map-pin.png" alt="Ride">
+            <span class="tab-label">Ride</span>
+        </a>
+        <a href="wallet.html">
+            <img src="icon-pack-basic/wallet.png" alt="Wallet">
+            <span class="tab-label">Wallet</span>
+        </a>
+        <a href="profile.html">
+            <img src="icon-pack-basic/user.png" alt="Profile">
+            <span class="tab-label">Profile</span>
+        </a>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <script>
+        // Initialize the map centered on Mtubatuba
+        const map = L.map('map').setView([-28.4175, 32.1849], 14);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker for Mtubatuba town center
+        const mtubatubaMarker = L.marker([-28.4175, 32.1849]).addTo(map)
+            .bindPopup('<b>Mtubatuba</b><br>KwaZulu-Natal, South Africa')
+            .openPopup();
+
+        // Add some points of interest
+        const pointsOfInterest = [
+            {
+                name: "Mtubatuba Municipality",
+                coords: [-28.4186, 32.1813],
+                type: "government"
+            },
+            {
+                name: "Mtubatuba Hospital",
+                coords: [-28.4142, 32.1838],
+                type: "hospital"
+            },
+            {
+                name: "Mtubatuba Police Station",
+                coords: [-28.4181, 32.1833],
+                type: "police"
+            },
+            {
+                name: "Hluhluwe-iMfolozi Park Gate",
+                coords: [-28.3826, 32.2076],
+                type: "park"
+            }
+        ];
+
+        // Custom icons
+        const govIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        });
+
+        const hospitalIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        });
+
+        const policeIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        });
+
+        const parkIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        });
+
+        // Add POIs to map
+        pointsOfInterest.forEach(poi => {
+            let icon;
+            switch(poi.type) {
+                case "government":
+                    icon = govIcon;
+                    break;
+                case "hospital":
+                    icon = hospitalIcon;
+                    break;
+                case "police":
+                    icon = policeIcon;
+                    break;
+                case "park":
+                    icon = parkIcon;
+                    break;
+                default:
+                    icon = L.Icon.Default;
+            }
+            
+            L.marker(poi.coords, {icon: icon}).addTo(map)
+                .bindPopup(`<b>${poi.name}</b><br>${poi.type.charAt(0).toUpperCase() + poi.type.slice(1)}`);
+        });
+
+        // Add a circle around town center
+        L.circle([-28.4175, 32.1849], {
+            color: 'blue',
+            fillColor: '#30f',
+            fillOpacity: 0.2,
+            radius: 1000
+        }).addTo(map).bindPopup("Central Mtubatuba area");
+    </script>
+</body>
+</html>
